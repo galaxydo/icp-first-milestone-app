@@ -1,0 +1,77 @@
+  def setScriptOf (Element, Script)
+    cloneNode() from Element then set clonedElement to it
+      set @_ of clonedElement to Script
+
+      js (Element, clonedElement)
+        while (Element.hasChildNodes()) {
+          clonedElement.appendChild(Element.firstChild)
+        }
+      end
+    put clonedElement after Element
+    remove Element
+  end
+
+  def knownBehaviorNames
+    set BehaviourKey to 'Behavior_' + Date.now() + '_' + Math.round(Math.random()*1000000)
+
+    defineBehavior(`behavior ${BehaviourKey} end`)
+
+    js (BehaviourKey)
+      let global = (new Function('return this'))()
+
+      let BehaviourPattern = global[BehaviourKey].toString()
+      delete global[BehaviourKey]
+
+      let NameList = []
+        Object.getOwnPropertyNames(global).forEach(
+          (Key) => {
+            let Descriptor = Object.getOwnPropertyDescriptor(global,Key)
+            if (
+              (typeof Descriptor.value === 'function') &&
+              (Descriptor.value.toString() === BehaviourPattern)
+            ) { NameList.push(Key) }
+          }
+        )
+      return NameList
+    end
+    return it
+  end
+
+  
+  def defineBehavior (Script)
+    createElement('div') on document then set Incubator to it
+      js (Script)
+        return Script.replace(/&/g,'&amp;').replace(/\x22/g,'&quot;')
+      end
+      put it into Script
+
+      put `
+        <div style="display:none" _="
+          ${Script}
+        "></div>
+      ` into the innerHTML of Incubator
+    get the first <div/> in Incubator then set auxDiv to it
+      put auxDiv after document.body      -- actually evaluates the given script
+    remove auxDiv
+  end
+
+  def evaluate (Script)
+    createElement('div') on document then set Incubator to it
+      js (Script)
+        return Script.replace(/&/g,'&amp;').replace(/\x22/g,'&quot;')
+      end
+      put it into Script
+
+      put `
+        <div style="display:none" _="
+          init
+            ${Script}
+          end
+        "></div>
+      ` into the innerHTML of Incubator
+    get the first <div/> in Incubator then set auxDiv to it
+      put auxDiv after document.body      -- actually evaluates the given script
+    remove auxDiv
+  end
+
+

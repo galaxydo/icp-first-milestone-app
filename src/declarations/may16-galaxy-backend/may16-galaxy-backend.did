@@ -1,0 +1,46 @@
+type Timestamp = int;
+type FileInfo = 
+ record {
+   content: blob;
+   createdAt: Timestamp;
+   extension: FileExtension;
+   name: text;
+   size: nat;
+ };
+type FileId__1 = text;
+type FileId = text;
+type FileExtension = 
+ variant {
+   aac;
+   avi;
+   gif;
+   jpeg;
+   jpg;
+   mp3;
+   mp4;
+   png;
+   svg;
+   wav;
+ };
+type FileData = 
+ record {
+   cid: principal;
+   content: blob;
+   createdAt: Timestamp;
+   extension: FileExtension;
+   fileId: FileId__1;
+   name: text;
+   size: nat;
+   uploadedAt: Timestamp;
+ };
+type Bucket = 
+ service {
+   generateRandom: (text) -> (text);
+   getFileInfo: (FileId) -> (opt FileData) query;
+   getInfo: () -> (vec FileData) query;
+   getSize: () -> (nat);
+   putFile: (FileInfo) -> (opt FileId);
+   wallet_balance: () -> (nat);
+   whoami: () -> (principal) query;
+ };
+service : () -> Bucket
