@@ -50,8 +50,9 @@ actor class Bucket () = this {
     }
   };
 
-  public shared(msg) func putFile(fi: FileInfo, collection: Text) : async ?FileId {
+  public shared(msg) func putFile(fi: FileInfo) : async ?FileId {
     do ? {
+      let collection = fi.collection;
       let owner = Principal.toText(msg.caller);
       let fileId = owner # "/" # collection # "/" # fi.name;
       let _ = createFileInfo(fileId, fi, owner, collection);

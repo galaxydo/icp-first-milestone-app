@@ -339,12 +339,12 @@ async function processFile(fileName: string) {
   const bsf = await blob.arrayBuffer();
 
   const fileInfo: FileInfo = {
-    name: file.name,
-    createdAt: Number(Date.now() * 1000),
-    size: file.size,
-    // @ts-ignore
-    extension: getFileExtension(file.type),
-    content: encodeArrayBuffer(bsf),
+    'name': file.name,
+    'createdAt': Number(Date.now() * 1000),
+    'size': file.size,
+    'collection': defaultCollectionName,
+    'extension': getFileExtension(file.type),
+    'content': encodeArrayBuffer(bsf),
   };
   console.log(`processFile: Created fileInfo object: ${JSON.stringify(fileInfo)}`);
 
