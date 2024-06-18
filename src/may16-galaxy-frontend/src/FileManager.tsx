@@ -2,45 +2,25 @@ import { h } from 'preact';
 
 import folderKanbanIcon from "@iconify/icons-lucide/folder-kanban";
 
-import Topbar from './components/layout/admin/slots/Topbar';
-import { Alert, Button, Drawer, Toast } from './components/daisyui';
-import Leftbar from './components/layout/admin/slots/Leftbar';
-import { useLayoutContext } from './states/layout';
+import Topbar from '@/components/Topbar';
+import { Alert, Button, Drawer, Toast } from '@/components/daisyui';
+import Leftbar from '@/components/Leftbar';
 
-import { adminMenuItems } from "@/data/layout/admin";
-
-import AllFiles from "./components/file-manager/AllFiles";
-import AllFolders from "./components/file-manager/AllFolders";
 import Overview from "./components/file-manager/Overview";
-import StorageStat from "./components/file-manager/StorageStat";
 import UploadButton from "./components/file-manager/UploadButton";
-// import { FileManagerContextProvfileider, useFileManager, useFileManagerHook } from "./hooks/use-file-manager";
 import Icon from './components/Icon';
-
+import { menuItems } from './menu';
+import AllFiles from './components/file-manager/AllFiles';
 
 export default function FileManager(props: { theme: string; }) {
-  // const {
-  //     state: { leftbar },
-  //     toggleLeftbarDrawer,
-  // } = useLayoutContext();
-
-  // const { pathname } = useLocation();
-
-  // useEffect(() => {
-  //     toggleLeftbarDrawer(false);
-  // }, [pathname]);
-
-  const { showOverviewDrawer, setShowOverviewDrawer } = {} // useFileManagerHook();
-
   return <div class="size-full">
     <div class="flex overflow-hidden">
       <div className="block">
         <Drawer
           role="leftDrawer"
           open={false}
-          // onClickOverlay={() => toggleLeftbarDrawer(false)}
           className={`z-20 `}
-          side={<Leftbar menuItems={adminMenuItems} />}></Drawer>
+          side={<Leftbar menuItems={menuItems} activated="/" />}></Drawer>
       </div>
       <div class="main-wrapper overflow-auto">
         <div class="flex h-full flex-col ">
@@ -53,7 +33,6 @@ export default function FileManager(props: { theme: string; }) {
                     <h3 className="text-lg font-medium">Storage</h3>
                     <div className="inline-flex items-center gap-3">
                       <Button
-                        // onClick={() => setShowOverviewDrawer(true)}
                         startIcon={<Icon icon={folderKanbanIcon} fontSize={16} />}
                         _="on click toggle [@checked=true] on <div[role='rightDrawer'] .drawer-toggle />"
                         size="sm"
@@ -71,7 +50,6 @@ export default function FileManager(props: { theme: string; }) {
                 role="rightDrawer"
                 open={false}
                 end
-                onClickOverlay={() => setShowOverviewDrawer(false)}
                 sideClassName={"z-[100]"}
                 side={<Overview />}></Drawer>
             </div>

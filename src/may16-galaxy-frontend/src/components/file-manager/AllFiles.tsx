@@ -36,45 +36,73 @@ import {
 import Icon from "@/components/Icon";
 import DateUtil from "@/helpers/utils/date";
 import { StringUtil } from "@/helpers/utils/string";
-import { IFileManagerFile } from "@/types/apps/file-manager";
+import { IFileManagerFile } from "@/types/file-manager";
+import { FileData } from "../../../../declarations/may16-galaxy-backend/may16-galaxy-backend.did";
 
-import { useFileManager, useFileManagerHook } from "@/hooks/use-file-manager";
-
-import state from '@/state';
-
-export const StorageFileRow = ({ file, checkedAll }: { file: IFileManagerFile; checkedAll?: boolean }) => {
-  const [checked, setChecked] = useState(checkedAll);
-  const { id: imageId, name, size, owner_name, last_modified_at, shared_with, icon } = file;
-
-  useEffect(() => {
-    setChecked(checkedAll);
-  }, [checkedAll]);
-
+export const LoadingFileRow = ({ file, ...props }: { file: FilePlaceholder; checkedAll?: boolean }) => {
   return (
     <>
-      <TableRow className="cursor-pointer hover:bg-base-200/40" onClick={() => setChecked(!checked)}
+      <TableRow className="cursor-pointer hover:bg-base-200/40 animate-pulse"
+        role="status"
+        {...props}
+      >
+        <Checkbox
+          size={"xs"}
+          checked={false}
+          disabled
+        />
+        <div className="flex items-center space-x-3 truncate">
+          <div className={`rounded bg-base-content/5 p-1.5 text-base-content/80`}>
+            <Icon icon={fileTextIcon} fontSize={20} />
+          </div>
+          <div>{file.name}</div>
+        </div>
+        <div className="text-sm font-medium w-6"></div>
+        <div>
+          <div className="text-sm w-2"></div>
+        </div>
+        <div className="text-sm w-2"></div>
+        <div className="w-4"></div>
+        <div className="w-2">
+        </div>
+        <div>
+          <Button color="ghost" size="sm" shape={"square"} aria-label="Show file" disabled>
+            <Icon icon={eyeIcon} className="text-base-content/70" fontSize={16} />
+          </Button>
+        </div>
+        <div></div>
+      </TableRow>
+    </>
+  );
+};
+
+export const StorageFileRow = ({ file, ...props }: { file: FileData; checkedAll?: boolean }) => {
+  const shared_with = "private";
+  
+  return (
+    <>
+      <TableRow className="cursor-pointer hover:bg-base-200/40"
         _="on click set ut to first <input[type='checkbox']/> in me then toggle @checked on ut then ut.click()"
+        {...props}
       >
         <Checkbox
           _="on click halt the event's bubbling"
           size={"xs"}
           checked={false}
-          onChange={() => setChecked(!checked)}
           aria-label="Single check"
         />
         <div className="flex items-center space-x-3 truncate">
           <div className={`rounded bg-base-content/5 p-1.5 text-base-content/80`}>
             <Icon icon={fileTextIcon} fontSize={20} />
           </div>
-          <div>{imageId}</div>
+          <div>{file.name}</div>
         </div>
-        <div className="text-sm font-medium">{name}</div>
-        {/*<div className="font-medium">{order.category}</div>*/}
+        <div className="text-sm font-medium">{file.collection}</div>
+        <div className="text-sm font-medium">{file.owner}</div>
         <div>
-          <div className="text-sm">{StringUtil.convertToStorageUnits(size)}</div>
+          <div className="text-sm">{StringUtil.convertToStorageUnits(file.size)}</div>
         </div>
-        <div className="text-sm">{DateUtil.formatted(last_modified_at)}</div>
-        <div>{owner_name}</div>
+        <div className="text-sm">{DateUtil.formatted(file.uploadedAt)}</div>
         <div>
           {shared_with === "private" ? (
             <span className="flex items-center gap-2 text-error">
@@ -91,7 +119,7 @@ export const StorageFileRow = ({ file, checkedAll }: { file: IFileManagerFile; c
           )}
         </div>
         <div>
-          <Button color="ghost" size="sm" shape={"square"} aria-label="Show file" _={`on click go to url "/image/${imageId}" in new window`}>
+          <Button color="ghost" size="sm" shape={"square"} aria-label="Show file" _={`on click go to url "/__fs__/${file.fileId}" in new window`}>
             <Icon icon={eyeIcon} className="text-base-content/70" fontSize={16} />
           </Button>
         </div>
@@ -101,12 +129,52 @@ export const StorageFileRow = ({ file, checkedAll }: { file: IFileManagerFile; c
   );
 };
 
+export type FilePlaceholder = {
+  // id: string;
+  name: string;
+};
+
+export const FilesTableBody = ({ storageFiles, ...props }: { storageFiles: (FileData|FilePlaceholder)[] }) => {
+  return <TableBody id="Files" {...props}>
+      {storageFiles.map((file, index) => {
+        if ('size' in file && file.size > 0) {
+          return <StorageFileRow file={file} key={index} />
+        }
+        return <LoadingFileRow file={file} key={index} hx-get={`/fileInfo/${file.name}`} hx-target="outerHTML" hx-trigger="load" />
+      }
+      )}
+    </TableBody>
+}
+
+export const FilesTable = () => {
+  return <Table className="mt-2 rounded-box">
+    <TableHead>
+      <Checkbox
+        _="
+                                    on click  
+           set value to ((<#Files input[type='checkbox']:not(:checked)/>).length == 0)
+           repeat in <#Files input[type='checkbox']/>
+             set it.checked to value
+             it.click() 
+           end
+                                "
+        size={"xs"}
+        aria-label="Check all"
+      />
+      <span className="text-sm font-medium text-base-content/80">Name</span>
+      <span className="text-sm font-medium text-base-content/80">Collection</span>
+      <span className="text-sm font-medium text-base-content/80">Owner</span>
+      <span className="text-sm font-medium text-base-content/80">Size</span>
+      <span className="text-sm font-medium text-base-content/80">Created At</span>
+      <span className="text-sm font-medium text-base-content/80">Shared With</span>
+      <span className="text-sm font-medium text-base-content/80">View</span>
+    </TableHead>
+
+    <FilesTableBody storageFiles={[]} hx-get="/myFileIds" hx-trigger="load" hx-swap="outerHTML" />
+  </Table>
+}
+
 const AllFiles = () => {
-  const { files, filterViewType, setFilterViewType, filterFileType, setFilterFileType } = useFileManagerHook();
-  const [checkedAll, setCheckedAll] = useState(false);
-
-  const { storageFiles } = state;
-
   return (
     <Card className="bg-base-100">
       <CardBody className={"p-0"}>
@@ -134,38 +202,7 @@ const AllFiles = () => {
           </div>
         </div>
         <div className="overflow-auto">
-          <Table className="mt-2 rounded-box">
-            <TableHead>
-              <Checkbox
-                _="
-                                    on click  
-           set value to ((<#Files input[type='checkbox']:not(:checked)/>).length == 0)
-           repeat in <#Files input[type='checkbox']/>
-             set it.checked to value
-             it.click() 
-           end
-                                "
-                size={"xs"}
-                checked={checkedAll}
-                onChange={() => setCheckedAll(!checkedAll)}
-                aria-label="Check all"
-              />
-              <span className="text-sm font-medium text-base-content/80">ID</span>
-              <span className="text-sm font-medium text-base-content/80">Name</span>
-              <span className="text-sm font-medium text-base-content/80">Size</span>
-              <span className="text-sm font-medium text-base-content/80">Created At</span>
-              <span className="text-sm font-medium text-base-content/80">Owner</span>
-              <span className="text-sm font-medium text-base-content/80">Shared With</span>
-              <span className="text-sm font-medium text-base-content/80">Action</span>
-            </TableHead>
-
-            <TableBody id="Files" _="on mutation of childList
-      call _hyperscript.processNode(me) then call _hyperscript.processNode(<div#Transclude />)">
-              {storageFiles.map((file, index) => (
-                <StorageFileRow file={file} checkedAll={checkedAll} key={index} />
-              ))}
-            </TableBody>
-          </Table>
+          <FilesTable storageFiles={[]} />
         </div>
       </CardBody>
     </Card>

@@ -22,10 +22,10 @@ export default defineConfig({
     rollupOptions: {
       // plugins: [multiInput()],
       input: {
-        reload: resolve(__dirname, 'reload.html'),
-        main: resolve(__dirname, 'index.html'),
-        sw: resolve(__dirname, 'src/index.tsx'),
-        authenticate: resolve(__dirname, 'src/authenticate.ts'),
+        // reload: resolve(__dirname, 'reload.html'),
+        index: resolve(__dirname, 'index.html'),
+        sw: resolve(__dirname, 'src/sw/index.tsx'),
+        // login: resolve(__dirname, 'src/login.ts'),
         // canvas: resolve(__dirname, 'assets/scripts/canvas.js')
         // may16: resolve(__dirname, 'src/may16.ts'),
         // htmx: resolve(__dirname, 'src/htmx.min.js')
@@ -49,7 +49,7 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: "declarations",
+        find: "@declarations",
         replacement: fileURLToPath(
           new URL("../declarations", import.meta.url)
         ),

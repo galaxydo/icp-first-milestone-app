@@ -3,17 +3,17 @@ import type { ActorMethod } from '@dfinity/agent';
 import type { IDL } from '@dfinity/candid';
 
 export interface Bucket {
-  'generateRandom' : ActorMethod<[string], string>,
-  'getFileInfo' : ActorMethod<[FileId], [] | [FileData]>,
-  'getInfo' : ActorMethod<[], Array<FileData>>,
+  'getFileInfo' : ActorMethod<[string, string], [] | [FileData]>,
+  'getMyFileIds' : ActorMethod<[string], Array<FileId>>,
   'getSize' : ActorMethod<[], bigint>,
-  'putFile' : ActorMethod<[FileInfo], [] | [FileId]>,
+  'putFile' : ActorMethod<[FileInfo, string], [] | [FileId]>,
   'wallet_balance' : ActorMethod<[], bigint>,
   'whoami' : ActorMethod<[], Principal>,
 }
 export interface FileData {
-  'cid' : Principal,
   'content' : Uint8Array | number[],
+  'collection' : string,
+  'owner' : string,
   'name' : string,
   'createdAt' : Timestamp,
   'size' : bigint,
@@ -35,6 +35,7 @@ export type FileId = string;
 export type FileId__1 = string;
 export interface FileInfo {
   'content' : Uint8Array | number[],
+  'collection' : string,
   'name' : string,
   'createdAt' : Timestamp,
   'size' : bigint,

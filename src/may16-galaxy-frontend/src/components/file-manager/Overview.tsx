@@ -4,16 +4,11 @@ import { Button, Card, CardBody, Progress, Tab, Tabs } from "@/components/daisyu
 
 import Icon from "@/components/Icon";
 
-import { useFileManager, useFileManagerHook } from "@/hooks/use-file-manager";
 import Activity from "./Activity";
 import UploadProcess from "./UploadProcess";
-import { Usages } from "./Usages";
-import state from '@/state';
+import state from '@/sw/state';
 
 const Overview = () => {
-  const { fileInformationTab, setFileInformationTab } = useFileManagerHook();
-  // const { uploadData } = useFileManagerHook();
-
   const { inProcess: uploadData, activity } = state;
 
   return (

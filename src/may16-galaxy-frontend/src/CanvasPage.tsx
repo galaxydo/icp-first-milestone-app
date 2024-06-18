@@ -1,18 +1,9 @@
 import { h } from 'preact';
 
-import folderKanbanIcon from "@iconify/icons-lucide/folder-kanban";
-
-import Topbar from './components/layout/admin/slots/Topbar';
-import { Button, Drawer } from './components/daisyui';
-import Leftbar from './components/layout/admin/slots/Leftbar';
-
-import { adminMenuItems } from "@/data/layout/admin";
-
-import AllFiles from "./components/file-manager/AllFiles";
-
-import Overview from "./components/file-manager/Overview";
-import UploadButton from "./components/file-manager/UploadButton";
-import Icon from './components/Icon';
+import Topbar from '@/components/Topbar';
+import { Button, Drawer } from '@/components/daisyui';
+import Leftbar from '@/components/Leftbar';
+import { menuItems } from './menu';
 
 export default function CanvasPage(props: { theme: string; }) {
 	return <div class="size-full">
@@ -23,7 +14,7 @@ export default function CanvasPage(props: { theme: string; }) {
 					open={false}
 					// onClickOverlay={() => toggleLeftbarDrawer(false)}
 					className={`z-20 `}
-					side={<Leftbar menuItems={adminMenuItems} />}></Drawer>
+					side={<Leftbar menuItems={menuItems} activated="/canvas" />}></Drawer>
 			</div>
 			<div class="main-wrapper overflow-auto">
 				<div class="flex h-full flex-col ">

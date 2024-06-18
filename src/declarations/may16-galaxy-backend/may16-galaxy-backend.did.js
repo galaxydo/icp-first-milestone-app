@@ -1,5 +1,4 @@
 export const idlFactory = ({ IDL }) => {
-  const FileId = IDL.Text;
   const Timestamp = IDL.Int;
   const FileId__1 = IDL.Text;
   const FileExtension = IDL.Variant({
@@ -15,8 +14,9 @@ export const idlFactory = ({ IDL }) => {
     'jpeg' : IDL.Null,
   });
   const FileData = IDL.Record({
-    'cid' : IDL.Principal,
     'content' : IDL.Vec(IDL.Nat8),
+    'collection' : IDL.Text,
+    'owner' : IDL.Text,
     'name' : IDL.Text,
     'createdAt' : Timestamp,
     'size' : IDL.Nat,
@@ -24,19 +24,24 @@ export const idlFactory = ({ IDL }) => {
     'extension' : FileExtension,
     'uploadedAt' : Timestamp,
   });
+  const FileId = IDL.Text;
   const FileInfo = IDL.Record({
     'content' : IDL.Vec(IDL.Nat8),
+    'collection' : IDL.Text,
     'name' : IDL.Text,
     'createdAt' : Timestamp,
     'size' : IDL.Nat,
     'extension' : FileExtension,
   });
   const Bucket = IDL.Service({
-    'generateRandom' : IDL.Func([IDL.Text], [IDL.Text], []),
-    'getFileInfo' : IDL.Func([FileId], [IDL.Opt(FileData)], ['query']),
-    'getInfo' : IDL.Func([], [IDL.Vec(FileData)], ['query']),
+    'getFileInfo' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Opt(FileData)],
+        ['query'],
+      ),
+    'getMyFileIds' : IDL.Func([IDL.Text], [IDL.Vec(FileId)], ['query']),
     'getSize' : IDL.Func([], [IDL.Nat], []),
-    'putFile' : IDL.Func([FileInfo], [IDL.Opt(FileId)], []),
+    'putFile' : IDL.Func([FileInfo, IDL.Text], [IDL.Opt(FileId)], []),
     'wallet_balance' : IDL.Func([], [IDL.Nat], []),
     'whoami' : IDL.Func([], [IDL.Principal], ['query']),
   });

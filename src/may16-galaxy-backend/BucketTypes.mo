@@ -38,17 +38,19 @@ module {
     size: Nat;
     extension: FileExtension;
     content: Blob;
+    collection: Text;
   }; 
 
   public type FileData = {
     fileId : FileId;
-    cid : Principal;
     uploadedAt : Timestamp;
     createdAt : Timestamp;
     name: Text;
     size: Nat;
     extension: FileExtension;
     content: Blob;
+    collection: Text;
+    owner: Text;
   };
 
   public type Map<X, Y> = TrieMap.TrieMap<X, Y>;

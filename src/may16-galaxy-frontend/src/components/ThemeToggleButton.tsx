@@ -4,13 +4,8 @@ import sunIcon from "@iconify/icons-lucide/sun";
 import { Button, ButtonProps } from "@/components/daisyui";
 
 import Icon from "@/components/Icon";
-import { useLayoutContext } from "@/states/layout";
 
 const ThemeToggleButton = (props: ButtonProps & { theme: string }) => {
-  const { state, changeTheme } = useLayoutContext();
-
-  console.log('ThemeToggleButton')
-
   return (
     <>
       <Button {...props} hx-get="/toggleTheme" hx-swap="none" _="
@@ -24,7 +19,7 @@ const ThemeToggleButton = (props: ButtonProps & { theme: string }) => {
                         end
 
                         toggle .hidden on <span/> in me
-                " onClick={() => changeTheme(state.theme == "dark" ? "light" : "dark")}>
+                ">
         <Icon hidden={props.theme == 'light'} icon={sunIcon} fontSize={20} /> 
         <Icon hidden={props.theme == 'dark'} icon={moonIcon} fontSize={20} />
       </Button>

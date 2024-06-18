@@ -9,6 +9,8 @@ import Debug "mo:base/Debug";
 import Prim "mo:prim";
 import Buffer "mo:base/Buffer";
 import Cycles "mo:base/ExperimentalCycles";
+import Text "mo:base/Text";
+
 
 actor class Bucket () = this {
 
@@ -24,100 +26,78 @@ actor class Bucket () = this {
       msg.caller
   };
   
-  public func getSize(): async Nat {
-    Debug.print("canister balance: " # Nat.toText(Cycles.balance()));
-    Prim.rts_memory_size();
-  };
-
-  func getrByte(f : Random.Finite) : ? Nat8 {
-    do ? {
-      f.byte()!
+  func createFileInfo(fileId: Text, fi: FileInfo, owner: Text, collection: Text) : ?FileId {
+    let newFileInfo = {
+      fileId = fileId;
+      owner = owner;
+      name = fi.name;
+      createdAt = fi.createdAt;
+      uploadedAt = Time.now();
+      size = fi.size;
+      extension = fi.extension;
+      content = fi.content;
+      collection = collection;
     };
-  };
-
-  public func generateRandom(name: Text): async Text {
-    var n : Text = name;
-    let entropy = await Random.blob();
-    var f = Random.Finite(entropy);
-    let count : Nat = 2;
-    var i = 1;
-    label l loop {
-      if (i >= count) break l;
-      let b = getrByte(f);
-      switch (b) {
-        case (?b) { n := n # Nat8.toText(b); i += 1 };
-        case null {
-          Debug.print("need more entropy...");
-          let entropy = await Random.blob();
-          f := Random.Finite(entropy);
-        };
+    let oldFileInfo = state.files.replace(fileId, newFileInfo);
+    switch (oldFileInfo) {
+      case null {
+        Debug.print("id is..." # debug_show(fileId));
+        ?fileId
       };
-    };
-    n
-  };
-
-  func createFileInfo(fileId: Text, fi: FileInfo) : ?FileId {
-          switch (state.files.get(fileId)) {
-              case (?_) { null }; 
-              case null {
-                  Debug.print("id is..." # debug_show(fileId));   
-                  state.files.put(fileId,
-                                      {
-                                          fileId = fileId;
-                                          cid = Principal.fromActor(this);
-                                          name = fi.name;
-                                          createdAt = fi.createdAt;
-                                          uploadedAt = Time.now();
-                                          size = fi.size ;
-                                          extension = fi.extension;
-                                          content = fi.content;
-                                      }
-                  );
-                  ?fileId
-              };
-          }
-  };
-
-  public func putFile(fi: FileInfo) : async ?FileId {
-    do ? {
-      let fileId = await generateRandom(fi.name);
-      createFileInfo(fileId, fi)!;
+      case _ {
+        null
+      };
     }
   };
 
-  func getFileInfoData(fileId : FileId) : ?FileData {
-      do ? {
-          let v = state.files.get(fileId)!;
-            {
-            fileId = v.fileId;
-            cid = v.cid;
-            name = v.name;
-            size = v.size;
-            extension = v.extension;
-            createdAt = v.createdAt;
-            uploadedAt = v.uploadedAt;
-            content = v.content;
-          }
-      }
-  };
-
-  public query func getFileInfo(fileId : FileId) : async ?FileData {
+  public shared(msg) func putFile(fi: FileInfo, collection: Text) : async ?FileId {
     do ? {
-      getFileInfoData(fileId)!
+      let owner = Principal.toText(msg.caller);
+      let fileId = owner # "/" # collection # "/" # fi.name;
+      let _ = createFileInfo(fileId, fi, owner, collection);
+      fileId;
     }
   };
 
-  public query func getInfo() : async [FileData] {
-    let b = Buffer.Buffer<FileData>(0);
+  public query(msg) func getFileInfo(collection: Text, fileName: Text) : async ?FileData {
+    do ? {
+        let owner = Principal.toText(msg.caller);
+        let fileId = owner # "/" # collection # "/" # fileName;
+
+        let v = state.files.get(fileId)!;
+          {
+          fileId = v.fileId;
+          owner = v.owner;
+          name = v.name;
+          size = v.size;
+          extension = v.extension;
+          createdAt = v.createdAt;
+          uploadedAt = v.uploadedAt;
+          content = v.content;
+          collection = v.collection;
+        }
+    }
+  };
+
+  public shared query(msg) func getMyFileIds(collection: Text) : async [FileId] {
+    let b = Buffer.Buffer<FileId>(0);
+    let ownerPrincipal = msg.caller;
     let _ = do ? {
-      for ((f, _) in state.files.entries()) {
-        b.add(getFileInfoData(f)!)
+      for ((k, v) in state.files.entries()) {
+        if (v.collection == collection and Text.equal(v.owner, Principal.toText(ownerPrincipal))) {
+          b.add(k)
+        }
       };
     };
     b.toArray()
   };
 
+  public func getSize(): async Nat {
+    Prim.rts_memory_size();
+  };
+
   public func wallet_balance() : async Nat {
+    Debug.print("canister balance: " # Nat.toText(Cycles.balance()));
     return Cycles.balance();
   };
 }

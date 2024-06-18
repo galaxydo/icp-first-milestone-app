@@ -1,6 +1,7 @@
 type Timestamp = int;
 type FileInfo = 
  record {
+   collection: text;
    content: blob;
    createdAt: Timestamp;
    extension: FileExtension;
@@ -24,22 +25,22 @@ type FileExtension =
  };
 type FileData = 
  record {
-   cid: principal;
+   collection: text;
    content: blob;
    createdAt: Timestamp;
    extension: FileExtension;
    fileId: FileId__1;
    name: text;
+   owner: text;
    size: nat;
    uploadedAt: Timestamp;
  };
 type Bucket = 
  service {
-   generateRandom: (text) -> (text);
-   getFileInfo: (FileId) -> (opt FileData) query;
-   getInfo: () -> (vec FileData) query;
+   getFileInfo: (text, text) -> (opt FileData) query;
+   getMyFileIds: (text) -> (vec FileId) query;
    getSize: () -> (nat);
-   putFile: (FileInfo) -> (opt FileId);
+   putFile: (FileInfo, text) -> (opt FileId);
    wallet_balance: () -> (nat);
    whoami: () -> (principal) query;
  };

@@ -7,18 +7,11 @@ import { Button, Modal } from "@/components/daisyui";
 import Icon from "@/components/Icon";
 import FileUploader from "@/components/forms/FileUploader";
 
-import { useFileManager, useFileManagerHook } from "@/hooks/use-file-manager";
-
 const UploadButton = () => {
-    const { uploadModalRef, showUploadModal, uploadFileProcess } = useFileManagerHook();
-
-    // showUploadModal();
-
     return (
         <>
             <Button
                 _="on click add @open to <dialog[role='files']/> then add .modal-open to <dialog[role='files']/>"
-                onClick={showUploadModal}
                 startIcon={<Icon icon={uploadIcon} className="size-4" />}
                 size="sm"
                 aria-label="Upload file"
@@ -26,7 +19,7 @@ const UploadButton = () => {
                 className=" border-base-content/20">
                 Upload
             </Button>
-            <Modal ref={uploadModalRef} open={false} backdrop role="files">
+            <Modal open={false} backdrop role="files">
                 <div className="flex items-center justify-between">
                     <p className="font-medium">Upload Files</p>
                     <form method="dialog">
