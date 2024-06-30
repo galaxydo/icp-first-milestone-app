@@ -8,14 +8,6 @@ import { menuItems } from './menu';
 export default function CanvasPage(props: { theme: string; }) {
 	return <div class="size-full">
 		<div class="flex overflow-hidden">
-			<div className="block">
-				<Drawer
-					role="leftDrawer"
-					open={false}
-					// onClickOverlay={() => toggleLeftbarDrawer(false)}
-					className={`z-20 `}
-					side={<Leftbar menuItems={menuItems} activated="/canvas" />}></Drawer>
-			</div>
 			<div class="main-wrapper overflow-auto">
 				<div class="flex h-full flex-col ">
 					<Topbar theme={props.theme} />

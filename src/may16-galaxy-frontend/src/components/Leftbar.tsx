@@ -8,7 +8,7 @@ import { Button, Link, Menu, MenuDetails, MenuItem, MenuTitle } from "@/componen
 import Icon from "@/components/Icon";
 import Logo from "@/components/Logo";
 import { getActivatedLeftbarParentKeys } from "@/helpers/layout/admin/leftbar";
-import { cn } from "@/helpers/utils/cn";
+import { cn } from "@/utils/cn";
 import { IMenuItem } from "@/types/leftbar";
 
 const LeftMenuItem = ({ menuItem, selected }: { menuItem: IMenuItem; selected: boolean }) => {

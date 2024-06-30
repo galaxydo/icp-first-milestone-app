@@ -3,7 +3,7 @@ import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
 
 import { Input, InputProps } from "@/components/daisyui";
 
-import { cn } from "@/helpers/utils/cn";
+import { cn } from "@/utils/cn";
 
 type FormInputProps<
   TFieldValues extends FieldValues = FieldValues,

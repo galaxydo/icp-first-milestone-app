@@ -21,7 +21,7 @@ async function loginWithInternetIdentity() {
 		},
 	};
 
-	const loginAsAnonymous = process.env.DFX_NETWORK === "ic" ? false : true;
+	const loginAsAnonymous = !!window.location.href.startsWith('http://localhost') // process.env.DFX_NETWORK === "ic" ? false : true;
 
 	if (!loginAsAnonymous) {
 		await new Promise(async resolve => {
@@ -43,10 +43,36 @@ async function loginWithInternetIdentity() {
 			CANISTER_ID_MAY16_GALAXY_FRONTEND: process.env.CANISTER_ID_MAY16_GALAXY_FRONTEND!,
 			CANISTER_ID_MAY16_GALAXY_BACKEND: process.env.CANISTER_ID_MAY16_GALAXY_BACKEND!,
 			CANISTER_ID_INTERNET_IDENTITY: process.env.CANISTER_ID_INTERNET_IDENTITY!,
+			REGISTER_TIMESTAMP: Math.ceil(Date.now() / 1000)
 		}).toString()
-		await navigator.serviceWorker.register(`/galaxy-service-worker.js?${urlParams}`, { scope: '/', type: 'module' })
-		// handover control to service worker index page handler
-		location.reload()
+		// Register the new service worker
+
+		navigator.serviceWorker.getRegistrations().then(registrations => {
+			for (let registration of registrations) {
+				console.log('unregister', registration)
+				registration.unregister();
+			}
+			navigator.serviceWorker.register(`/galaxy-service-worker.js?${urlParams}`, { scope: '/', type: 'module' })
+				.then(registration => {
+					console.log('Service Worker registered with scope:', registration.scope);
+
+					// Check if there's an existing service worker
+					if (registration.waiting) {
+						// If there's a waiting service worker, immediately activate it
+						registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+					}
+
+					// Listen for the new service worker to take control
+					// navigator.serviceWorker.addEventListener('controllerchange', () => {
+					console.log('New service worker activated and controlling the page');
+					window.location.reload();
+					// });
+				})
+				.catch(error => {
+					console.error('Service Worker registration failed:', error);
+				});
+
+		});
 	} catch (err) {
 		console.error(err)
 		document.body.classList.add('error')

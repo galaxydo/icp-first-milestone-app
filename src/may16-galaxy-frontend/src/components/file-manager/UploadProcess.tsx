@@ -5,7 +5,7 @@ import xCircleIcon from "@iconify/icons-lucide/x-circle";
 import { Progress } from "@/components/daisyui";
 
 import Icon from "@/components/Icon";
-import { StringUtil } from "@/helpers/utils/string";
+import { StringUtil } from "@/utils/string";
 import { IFileManagerUploadProcess } from "@/types/apps/file-manager";
 
 import { useFileManager, useFileManagerHook } from "@/hooks/use-file-manager";
@@ -16,13 +16,12 @@ export const ProcessPercent = (props) => <span {...props} className="text-sm tex
 export const SingleProcess = ({ process, ...props }: { process: IFileManagerUploadProcess }) => {
   const { name, percent, size, state } = process;
   return (
-    <div {...props} class='SingleProcess'>
+    <div {...props} className='SingleProcess' hx-target="this" hx-swap="delete" sse-swap={`completed-${process.name}`}>
       <div className="flex items-center justify-between">
         <span className="font-medium">{name}</span>
       </div>
       <div className="mt-1 flex items-center justify-between">
         <ProcessPercent sse-swap={`progress-${process.name}`} percent={process.percent} />
-        <div hx-swap="delete" hx-target="closest .SingleProcess" sse-swap={`completed-${process.name}`}></div>
         <span className="text-xs text-base-content/70">{StringUtil.convertToStorageUnits(size)}</span>
       </div>
       <div sse-swap={`progress-${process.name}-indicator`}>
@@ -39,6 +38,7 @@ export const SingleProcess = ({ process, ...props }: { process: IFileManagerUplo
 
 //.UploadProcess
 const UploadProcess = ({ uploadData }: { uploadData: IFileManagerUploadProcess[] }) => {
+  debugger;
   return (
     <div className="space-y-2 rounded-box border border-base-content/20 px-4 pb-2 pt-3" id="UploadProcess" hx-ext="sse" sse-connect="/sse">
       <div hx-swap="afterbegin transition:true" hx-target="#Timeline" sse-swap={`completed`}></div>

@@ -1,4 +1,4 @@
-import error404Image from "@/images/landscape/error-404.svg";
+import error404Image from "@/images/error-404.svg";
 
 const NotFoundPage = () => {
     return (

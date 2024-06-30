@@ -1,7 +1,7 @@
 import { Progress } from "@/components/daisyui";
 
 import Icon from "@/components/Icon";
-import { cn } from "@/helpers/utils/cn";
+import { cn } from "@/utils/cn";
 import { IFileManagerCategoryItem } from "@/types/apps/file-manager";
 
 import { useFileManager, useFileManagerHook } from "@/hooks/use-file-manager";

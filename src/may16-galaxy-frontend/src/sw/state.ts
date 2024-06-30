@@ -2,7 +2,7 @@
 
 import { IFileManagerFile, IFileManagerUploadProcess } from "@/types/file-manager";
 
-export type StorageFile = IFileManagerUploadProcess & { type: string }
+export type StorageFile = IFileManagerUploadProcess & { type: string } & { id: string }
 
 export type State = {
   inProcess: StorageFile[],

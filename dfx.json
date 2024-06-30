@@ -5,7 +5,7 @@
         "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
     },
     "may16-galaxy-backend": {
-      "main": "src/may16-galaxy-backend/Buckets.mo",
+      "main": "src/may16-galaxy-backend/Pictures.mo",
       "type": "motoko"
     },
     "may16-galaxy-frontend": {

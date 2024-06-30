@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { Children, HTMLAttributes, ReactElement, cloneElement, forwardRef, isValidElement } from "react";
 import { twMerge } from "tailwind-merge";
 
-import { cn } from "@/helpers/utils/cn";
+import { cn } from "@/utils/cn";
 
 import { bgColors, brandColors, componentStatuses } from "../constants";
 import { IComponentBaseProps } from "../types";

@@ -6,22 +6,14 @@ import Topbar from '@/components/Topbar';
 import { Alert, Button, Drawer, Toast } from '@/components/daisyui';
 import Leftbar from '@/components/Leftbar';
 
-import Overview from "./components/file-manager/Overview";
-import UploadButton from "./components/file-manager/UploadButton";
-import Icon from './components/Icon';
-import { menuItems } from './menu';
-import AllFiles from './components/file-manager/AllFiles';
+import Overview from "@/components/file-manager/Overview";
+import UploadButton from "@/components/file-manager/UploadButton";
+import Icon from '@/components/Icon';
+import AllFiles from '@/components/file-manager/AllFiles';
 
 export default function FileManager(props: { theme: string; }) {
   return <div class="size-full">
     <div class="flex overflow-hidden">
-      <div className="block">
-        <Drawer
-          role="leftDrawer"
-          open={false}
-          className={`z-20 `}
-          side={<Leftbar menuItems={menuItems} activated="/" />}></Drawer>
-      </div>
       <div class="main-wrapper overflow-auto">
         <div class="flex h-full flex-col ">
           <Topbar theme={props.theme} />

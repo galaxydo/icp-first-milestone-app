@@ -1,5 +1,4 @@
-import avatar1 from "@/images/avatars/1.png";
-import avatar from "@/images/avatars/icp.png";
+import avatar from "@/images/icp.png";
 
 import bellIcon from "@iconify/icons-lucide/bell";
 import logoutIcon from "@iconify/icons-lucide/log-out";
@@ -22,6 +21,7 @@ import {
   NavbarCenter,
   NavbarEnd,
   NavbarStart,
+	Toggle,
 } from "@/components/daisyui";
 
 import Icon from "@/components/Icon";
@@ -44,7 +44,13 @@ const Topbar = ({ theme }) => {
         </Button>
         <SearchButton />
       </NavbarStart>
-      <NavbarCenter></NavbarCenter>
+      <NavbarCenter>
+        <label for="Toggle3" class="inline-flex items-center p-2 rounded-md cursor-pointer dark:text-gray-100">
+        	<input id="Toggle3" type="checkbox" class="hidden peer" />
+        	<span class="px-4 py-2 rounded-l-md dark:bg-violet-600 peer-checked:dark:bg-gray-700">Canvas</span>
+        	<span class="px-4 py-2 rounded-r-md dark:bg-gray-700 peer-checked:dark:bg-violet-600">Manage</span>
+        </label>
+      </NavbarCenter>
       <NavbarEnd className="gap-1.5">
         <ThemeToggleButton theme={theme} shape="circle" color="ghost" size="sm" />
         <NotificationButton />

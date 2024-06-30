@@ -1,4 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;1000&display=swap");
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/DM-Sans-Regular.ttf') format('truetype');
+}
 
 :root {
     --leftbar-width: 240px;

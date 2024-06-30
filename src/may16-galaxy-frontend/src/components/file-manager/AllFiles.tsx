@@ -1,32 +1,16 @@
 import eyeIcon from "@iconify/icons-lucide/eye";
-import fileSpreadsheetIcon from "@iconify/icons-lucide/file-spreadsheet";
 import fileTextIcon from "@iconify/icons-lucide/file-text";
-import fileUpIcon from "@iconify/icons-lucide/file-up";
-import folderIcon from "@iconify/icons-lucide/folder";
 import folderGit2Icon from "@iconify/icons-lucide/folder-git-2";
-import folderUpIcon from "@iconify/icons-lucide/folder-up";
 import globeIcon from "@iconify/icons-lucide/globe";
-import grid2X2Icon from "@iconify/icons-lucide/grid-2x2";
-import listIcon from "@iconify/icons-lucide/list";
-import plusIcon from "@iconify/icons-lucide/plus";
 import searchIcon from "@iconify/icons-lucide/search";
 import shieldIcon from "@iconify/icons-lucide/shield";
-
-import { useEffect, useState } from "react";
 
 import {
   Button,
   Card,
   CardBody,
   Checkbox,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
   Input,
-  Join,
-  Select,
-  SelectOption,
   Table,
   TableBody,
   TableHead,
@@ -34,8 +18,8 @@ import {
 } from "@/components/daisyui";
 
 import Icon from "@/components/Icon";
-import DateUtil from "@/helpers/utils/date";
-import { StringUtil } from "@/helpers/utils/string";
+import DateUtil from "@/utils/date";
+import { StringUtil } from "@/utils/string";
 import { IFileManagerFile } from "@/types/file-manager";
 import { FileData } from "../../../../declarations/may16-galaxy-backend/may16-galaxy-backend.did";
 
@@ -45,6 +29,7 @@ export const LoadingFileRow = ({ file, ...props }: { file: FilePlaceholder; chec
       <TableRow className="cursor-pointer hover:bg-base-200/40 animate-pulse"
         role="status"
         {...props}
+        hx-get={`/fileInfo/${file.name}`} hx-target="outerHTML" hx-trigger="load"
       >
         <Checkbox
           size={"xs"}
@@ -140,7 +125,7 @@ export const FilesTableBody = ({ storageFiles, ...props }: { storageFiles: (File
         if ('size' in file && file.size > 0) {
           return <StorageFileRow file={file} key={index} />
         }
-        return <LoadingFileRow file={file} key={index} hx-get={`/fileInfo/${file.name}`} hx-target="outerHTML" hx-trigger="load" />
+        return <LoadingFileRow file={file} key={index} />
       }
       )}
     </TableBody>

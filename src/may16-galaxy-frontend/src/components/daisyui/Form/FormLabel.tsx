@@ -1,6 +1,6 @@
 import { LabelHTMLAttributes, ReactElement, forwardRef } from "react";
 
-import { cn } from "@/helpers/utils/cn";
+import { cn } from "@/utils/cn";
 
 import { IComponentBaseProps } from "../types";
 

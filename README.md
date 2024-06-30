@@ -6,8 +6,6 @@ It enables users to benefit through many possible scenarios such as example of s
 
 ## How it Works
 
-<img width="1467" alt="Screenshot 2024-06-18 at 14 09 02" src="https://github.com/galaxydo/june-tenth-app/assets/4569866/6f07e1c5-4293-44a1-984d-0f7240649e82">
-
 1. When user opens the app first time, he is presented with login page
 
 - statically generated index.html bundled with index.ts
@@ -26,7 +24,6 @@ It enables users to benefit through many possible scenarios such as example of s
 - SW route POST /uploadFiles receives files and calls putFile method on canister asynchronously
 - when file uploading starts, it immediately adds loading row into file table triggering /fileInfo request with htmx
 - /fileInfo is waiting for canister getFileInfo method to return details of uploaded file and then renders actual file row
-- when collection is empty, it initiates uploading of example file automatically
 
 3. When user opens Canvas page, it shows Excalidraw Canvas
 - it can read all the uploaded images from canister middleware endpoint __fs__/fileId
@@ -38,10 +35,12 @@ It enables users to benefit through many possible scenarios such as example of s
 ### frontend
 
 ```
-ls src/**/*.ts* | entr -r -s 'vite build --mode development && cp dist/galaxy-service-worker.js galaxy-service-worker
+cd src/may16-galaxy-frontend
+ls src/**/*.ts* | entr -r -s 'vite build --mode development && cp dist/galaxy-service-worker.js galaxy-service-worker'
 ```
 
 ```
+cd src/may16-galaxy-frontend
 cd dist && ~/.deno/bin/file_server
 ```
 
@@ -58,6 +57,10 @@ dfx deps deploy
 ```
 
 ```
+dfx canister create may16-galaxy-frontend
+```
+
+```
 ls src/**/*.mo* | entr -r -s 'dfx deploy --yes may16-galaxy-backend && dfx build may16-galaxy-frontend'
 ```
 
@@ -69,4 +72,6 @@ dfx ledger --network ic create-canister h3sxa-x3fh3-c2fxp-ubrqw-upjcq-fbjt5-lt2e
 dfx identity --network ic --identity april30 top-up --amount 0.15 ylngo-viaaa-aaaal-qja2a-cai
 
 dfx deploy --identity april30 --network ic may16-galaxy-frontend
+
+dfx deploy --identity april30 --network ic may16-galaxy-backend
 ```

@@ -1,50 +1,30 @@
 export const idlFactory = ({ IDL }) => {
-  const Timestamp = IDL.Int;
-  const FileId__1 = IDL.Text;
-  const FileExtension = IDL.Variant({
-    'aac' : IDL.Null,
-    'avi' : IDL.Null,
-    'gif' : IDL.Null,
-    'jpg' : IDL.Null,
-    'mp3' : IDL.Null,
-    'mp4' : IDL.Null,
-    'png' : IDL.Null,
-    'svg' : IDL.Null,
-    'wav' : IDL.Null,
-    'jpeg' : IDL.Null,
-  });
-  const FileData = IDL.Record({
+  const PictureId = IDL.Text;
+  const Time = IDL.Int;
+  const Picture = IDL.Record({
     'content' : IDL.Vec(IDL.Nat8),
     'collection' : IDL.Text,
     'owner' : IDL.Text,
     'name' : IDL.Text,
-    'createdAt' : Timestamp,
-    'size' : IDL.Nat,
-    'fileId' : FileId__1,
-    'extension' : FileExtension,
-    'uploadedAt' : Timestamp,
+    'pictureId' : PictureId,
+    'uploadedAt' : Time,
   });
-  const FileId = IDL.Text;
-  const FileInfo = IDL.Record({
-    'content' : IDL.Vec(IDL.Nat8),
-    'collection' : IDL.Text,
-    'name' : IDL.Text,
-    'createdAt' : Timestamp,
-    'size' : IDL.Nat,
-    'extension' : FileExtension,
-  });
-  const Bucket = IDL.Service({
-    'getFileInfo' : IDL.Func(
+  const Pictures = IDL.Service({
+    'getMemorySize' : IDL.Func([], [IDL.Nat], []),
+    'listPictureIds' : IDL.Func([IDL.Text], [IDL.Vec(PictureId)], ['query']),
+    'readPicture' : IDL.Func(
         [IDL.Text, IDL.Text],
-        [IDL.Opt(FileData)],
+        [IDL.Opt(Picture)],
         ['query'],
       ),
-    'getMyFileIds' : IDL.Func([IDL.Text], [IDL.Vec(FileId)], ['query']),
-    'getSize' : IDL.Func([], [IDL.Nat], []),
-    'putFile' : IDL.Func([FileInfo, IDL.Text], [IDL.Opt(FileId)], []),
+    'uploadPicture' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+        [IDL.Opt(PictureId)],
+        [],
+      ),
     'wallet_balance' : IDL.Func([], [IDL.Nat], []),
     'whoami' : IDL.Func([], [IDL.Principal], ['query']),
   });
-  return Bucket;
+  return Pictures;
 };
 export const init = ({ IDL }) => { return []; };

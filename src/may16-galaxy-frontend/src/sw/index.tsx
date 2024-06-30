@@ -13,13 +13,12 @@ import { Progress } from '@/components/daisyui/index.js';
 import { IFileManagerFile } from '@/types/file-manager/file.js';
 import DateUtil from '@/helpers/utils/date.js';
 import AllFiles, { FilePlaceholder, FilesTable, FilesTableBody, LoadingFileRow, StorageFileRow } from '@/components/file-manager/AllFiles.jsx';
-import CanvasPage from '@/CanvasPage.jsx';
+import CanvasPage from '@/pages/CanvasPage.jsx';
 
 import mockFile from './mockFile'
 import { b64toBlob, getFileExtension, sleep } from './utils';
 import NotFoundPage from '@/pages/not-found';
-import { authorize, backend } from './canister';
-import { self } from './self';
+import { authorize, backendActor } from './canister';
 import LoginPage from '@/pages/Login';
 
 import { FileData, FileId, FileInfo } from "../../../declarations/may16-galaxy-backend/may16-galaxy-backend.did.d"
@@ -30,6 +29,36 @@ import { Wayne, FileSystem } from '@jcubic/wayne';
 import FS from "@isomorphic-git/lightning-fs";
 import mime from "mime";
 import path from "path-browserify";
+import FilesPage from '@/pages/FilesPage';
+
+export declare const self: ServiceWorkerGlobalScope;
+
+/// <reference lib="webworker" />
+export type { }
+
+self.addEventListener('error', (err) => {
+  console.error('SW error', err.toString());
+})
+
+self.addEventListener('install', event => {
+  console.log('Service Worker installing.');
+  // Skip waiting to activate the new service worker immediately
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', event => {
+  console.log('Service Worker activating.');
+  // Claim clients to take control of all pages immediately
+  event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener('message', event => {
+    console.log('YYY')
+  debugger;
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 
 const app = new Wayne();
 
@@ -38,38 +67,38 @@ const { promises: fs } = new FS("__galaxy__");
 
 app.use(FileSystem({ path, fs, mime, prefix: '__fs__' }));
 
-//.my-files-canister
-// when page is refreshed there might've been some new files added into canister so we refresh the table with list of files from canister
-// or just on refresh button?
-// or optimistic update
-
 const defaultCollectionName = "Personal";
 
 //.getMyFileIds
 app.get('/myFileIds', async (req, res) => {
-  const fileIds: string[] = await backend.getMyFileIds();
+  const collection = req.params.collection;
+  
+  const pictureIds: string[] = await backendActor.listPictureIds(collection);
 
-  const storageFiles: IFileManagerFile|FilePlaceholder[] = []
+  const storageFiles: IFileManagerFile | FilePlaceholder[] = []
 
-  if (fileIds.length == 0) {
+  if (pictureIds.length == 0) {
     const exampleFileName = 'example.jpg'
 
-    addFileToProcess({
-      name: exampleFileName,
-      size: 0,
-      percent: 1,
-      type: 'image/png',
-      id: null,
-    }, mockFile())
+    //.x can be single function with explicit no-await
+    {
+      addFileToProcess({
+        name: exampleFileName,
+        size: 0,
+        percent: 1,
+        type: 'image/png',
+        id: null,
+      }, mockFile())
 
-    processFile(exampleFileName)
+      processFile(exampleFileName);
+    }
 
     storageFiles.push({
       'name': exampleFileName,
     })
   }
 
-  for (const it of fileIds) {
+  for (const it of pictureIds) {
     const [owner, collection, fileName] = it.split('/');
     storageFiles.push({
       'name': fileName,
@@ -78,39 +107,6 @@ app.get('/myFileIds', async (req, res) => {
 
   return res.html(render(<FilesTableBody storageFiles={storageFiles} />))
 })
-
-  // const files: FileData[] = await backend.getMyFiles();
-
-  // if (fileIds.length == 0) {
-  //   addFileToProcess({
-  //     name: 'success.jpg',
-  //     size: 2000,
-  //     percent: 55,
-  //     type: 'image/png',
-  //     id: 'unknown',
-  //   }, mockFile())
-
-  //   processFile('success.jpg')
-  // }
-
-  // const storageFiles: IFileManagerFile[] = [];
-
-  // fs.writeFile('./', mockFile())
-
-  // TODO.. we reload files from canister whenever page is full refreshed, otherwise we reload full files table from cache when files are uploaded
-  // also, on refresh when no files in canister present, we simulate uploading a mock file
-
-  // for (const it of files) {
-  //   storageFiles.push({
-  //     'id': it.fileId,
-  //     'name': it.name,
-  //     'owner_name': it.cid.toString(),
-  //     'shared_with': 'public',
-  //     'size': Number.parseInt(BigInt(it.size).toString()),
-  //     'last_modified_at': new Date(it.createdAt.toString()),
-  //   })
-  // }
-
 
 //.getFileInfo
 app.get('/fileInfo/{name}', async (req, res) => {
@@ -123,43 +119,47 @@ app.get('/fileInfo/{name}', async (req, res) => {
   const cachedFile = await fs.readFile(`${fileId}`)
 
   const file: FileData = {
-      'name': fileName,
-      'collection': collection,
-      'owner': owner,
-      'content': [],
-      'createdAt': 0,
-      'extension': '',
-      'fileId': fileId,
-      'uploadedAt': 0,
-    }
-  
+    'name': fileName,
+    'collection': collection,
+    'owner': owner,
+    'content': [],
+    'createdAt': 0,
+    'extension': '',
+    'fileId': fileId,
+    'uploadedAt': 0,
+  }
+
+  //.x but what if the file with same name has been updated by another device then we surely still need to refresh cache
   if (cachedFile) {
     file.size = cachedFile.length;
     file.content = cachedFile;
     return <StorageFileRow file={file} />
   }
 
-  const remoteFile = await backend.getFileInfo(collection, fileName)
+  const remoteFile = await backendActor.readPicture(collection, fileName)
 
   if (remoteFile && remoteFile[0]) {
     await fs.writeFile(`${fileId}`, remoteFile[0].content);
 
     file.content = remoteFile[0].content;
-    file.size = remoteFile[0].size;
-    file.createdAt = remoteFile[0].createdAt;
+    file.size = remoteFile[0].content.length;
     file.uploadedAt = remoteFile[0].uploadedAt;
-    
+
     return <StorageFileRow file={
       file
     } />
   }
 
-  return <LoadingFileRow file={file} hx-get={`/fileInfo/${fileName}`} hx-target="outerHTML" hx-trigger="load, delay: 500ms" />
+  //.x wait a sec..
+  // use hx-trigger delay 2s instead
+  await sleep(1000);
+
+  return <LoadingFileRow file={file} />
 })
 
 //.getSize
 app.get('/size', async (req, res) => {
-  const size = await backend.getSize();
+  const size = await backendActor.getMemorySize();
   state.sizeInKb = (size / BigInt(1000)).toString();
   return res.html(render(<span>{state.sizeInKb}</span>))
 });
@@ -167,7 +167,7 @@ app.get('/size', async (req, res) => {
 //.whoami
 app.get('/whoami', async (req, res) => {
   await authorize();
-  const principal = await backend.whoami();
+  const principal = await backendActor.whoami();
   state.principal = principal.toString();
   return res.html(render(<span>{state.principal}</span>))
 });
@@ -260,7 +260,7 @@ app.get('/', async (req, res) => {
           FilePond.registerPlugin(FilePondPluginImageValidateSize);
       </script>
   </body></html>`
-  const content = render(<FileManager theme={theme} />)
+  const content = render(<FilesPage theme={theme} />)
   const html = prefix + content + suffix;
   return res.html(html)
 })
@@ -274,10 +274,10 @@ app.get('/canvas', async (req, res) => {
       <title>Galaxy File Manager</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link href="/main.css" rel="stylesheet" />
-<link href="/index.css" rel="stylesheet" />
-      <link href="styles//app.css" rel="stylesheet" />
-        <script src="/htmx/htmx2.min.js"></script>
-        <script src="/htmx/_hyperscript.min.js"></script>
+      <link href="/index.css" rel="stylesheet" />
+      <link href="styles/app.css" rel="stylesheet" />
+      <script src="/htmx/htmx2.min.js"></script>
+      <script src="/htmx/_hyperscript.min.js"></script>
       <script src="/excalidraw/react.development.js"></script>
       <script src="/excalidraw/react-dom.development.js"></script>
       <script
@@ -288,8 +288,30 @@ app.get('/canvas', async (req, res) => {
     <body>`
 
   const suffix = `
-    <script type="text/javascript" src="/scripts/canvas.js"></script>
+    <script type="text/javascript">
+      const App = () => {
+        return React.createElement(
+          React.Fragment,
+          null,
+          React.createElement(
+            "div",
+            {
+              style: { height: "500px" },
+            },
+            React.createElement(ExcalidrawLib.Excalidraw),
+          ),
+        );
+      };
+
+      const excalidrawWrapper = document.getElementById("app");
+      const root = ReactDOM.createRoot(excalidrawWrapper);
+      root.render(React.createElement(App));
+
+      // ea.updateScene()
+    </script>
     </body></html>`
+
+  //.x we should update the scene with list of files persisted in cache by collection we do readFolder from param collection argument
 
   const content = render(<CanvasPage theme={theme} />
   )
@@ -302,12 +324,12 @@ app.get('/canvas', async (req, res) => {
 
 //.toggle-theme
 app.get('/toggleTheme', (req, res) => {
+  //.x should be post method
   state.isDarkTheme = !state.isDarkTheme;
   res.text('OK')
 })
 
 //.uploadFiles
-
 type FileHiddenInput = {
   data: string,
   id: string
@@ -333,7 +355,7 @@ async function processFile(fileName: string) {
 
   // its can be just another field in inProcess
   const encoded = state.contentCache[fileName];
-  console.log(`processFile: Retrieved file content from state.contentCache: ${encoded}`);
+  console.log(`processFile: Retrieved file content from state.contentCache: ${encoded.length}`);
 
   const blob = b64toBlob(encoded, file.type);
   const bsf = await blob.arrayBuffer();
@@ -346,31 +368,22 @@ async function processFile(fileName: string) {
     'extension': getFileExtension(file.type),
     'content': encodeArrayBuffer(bsf),
   };
-  console.log(`processFile: Created fileInfo object: ${JSON.stringify(fileInfo)}`);
+  console.log(`processFile: Created fileInfo object: ${JSON.stringify(fileInfo.name)}`);
 
-  const fileId = (await backend.putFile(fileInfo, defaultCollectionName))[0] as string;
+  const fileId = (await backendActor.putFile(fileInfo))[0] as string;
   console.log(`processFile: Received fileId from backend: ${fileId}`);
 
   if (fileId) {
     console.log(`processFile: fileId exists, updating state.inProcess`);
     state.inProcess = state.inProcess.map(it => {
       if (it.name == fileName) {
+        it.id = fileId;
         it.percent = 100;
         // it.name = `${it.name} - ${fileId}`
         console.log(`processFile: Updated file in state.inProcess: ${JSON.stringify(it)}`);
       }
       return it;
     })
-    const fileRow: IFileManagerFile = {
-      'id': fileId,
-      'name': fileInfo.name,
-      'owner_name': 'You',
-      'shared_with': 'private',
-      'size': fileInfo.size,
-      'last_modified_at': DateUtil.minusMinutes(1),
-    }
-    state.storageFiles.push(fileRow)
-
   } else {
     console.log(`processFile: fileId does not exist, no updates made to state.inProcess`);
   }
@@ -393,6 +406,7 @@ app.post('/uploadFiles', async (req: Request, res) => {
         'size': file.size,
         'percent': 0,
         'type': file.type,
+        'id': null,
       }, file.data)
       processFile(file.name);
     }
@@ -414,6 +428,7 @@ app.post('/uploadFiles', async (req: Request, res) => {
 });
 
 app.get('/sse', function(req, res) {
+  console.log('sse handler')
   const stream = res.sse({
     onClose() {
       clearInterval(timerId);
@@ -421,11 +436,12 @@ app.get('/sse', function(req, res) {
   });
   var timerId = setInterval(function() {
     for (const it of state.inProcess) {
-      if (it.percent <= 100) {
-        // update percent value
-        stream.send({ event: 'progress-' + it.name, data: render(<span>{it.percent}%</span>) });
-
-        // update indicator
+      if (it.percent < 100) {
+        it.percent += Math.ceil(Math.random() * 7)
+        if (it.percent >= 100) {
+          it.percent = 99;
+        }
+        stream.send({ event: 'progress-' + it.name, data: render(<span>{it.percent}%</span>) })
         stream.send({
           event: `progress-${it.name}-indicator`, data: render(
             <Progress
@@ -438,21 +454,24 @@ app.get('/sse', function(req, res) {
           )
         })
       } else {
-        const fileRow: IFileManagerFile | undefined = state.storageFiles.find(ut => ut.name == it.name);
-        if (fileRow) {
-          // remove processing
-          stream.send({ event: 'completed-' + it.name })
-          state.inProcess = state.inProcess.filter(ut => {
-            return it.name != ut.name;
-          })
-
-          // append activity
-          const node = (<ActivityItem fileName={it.name} size={`${it.size}`} />)
-          stream.send({ event: 'completed', data: render(node) })
-
-          // append file list
-          stream.send({ event: 'completed-fileRow', data: render(<StorageFileRow file={fileRow} />) })
+        const fileRow: FilePlaceholder = {
+          'name': it.name,
         }
+
+        // remove processing
+        stream.send({ event: 'completed-' + it.name })
+        state.inProcess = state.inProcess.filter(ut => {
+          return it.name != ut.name;
+        })
+
+        // append activity
+        const node = (<ActivityItem fileName={it.name} size={`${it.size}`} />)
+        stream.send({ event: 'completed', data: render(node) })
+
+        // append file list
+        stream.send({ event: 'completed-fileRow', data: render(<LoadingFileRow file={fileRow} />) })
+
+        console.log('completed')
       }
     }
   }, 1000);
@@ -462,7 +481,7 @@ app.get('/sse', function(req, res) {
 // alternatively we use filesystem middleware now
 app.get('/image/{id}', async function(req, res) {
   const imageId = encodeURIComponent(req.params.id);
-  const file = await backend.getFileInfo(imageId);
+  const file = await backendActor.getFileInfo(imageId);
   const content = file[0].content;
   console.log('content', content)
   return res.blob(content)

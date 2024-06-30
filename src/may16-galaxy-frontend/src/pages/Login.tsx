@@ -2,9 +2,8 @@ import logInIcon from "@iconify/icons-lucide/log-in";
 
 import { Button, Checkbox } from "@/components/daisyui";
 
-
-import authImage from "@/images/auth/auth-hero.png";
-import avatar1Image from "@/images/avatars/1.png";
+import authImage from "@/images/auth-hero.png";
+import avatar1Image from "@/images/avatar.png";
 
 import starIcon from "@iconify/icons-lucide/star";
 

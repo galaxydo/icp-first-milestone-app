@@ -16,7 +16,7 @@ const Icon = (props: IconProps) => {
     'class': props.className ? props.className : ''
   })
 
-  console.log(html)
+  // console.log(html)
 
   // return <IconComp {...props}></IconComp>;
   return <span class={props.hidden ? "hidden" : ""} dangerouslySetInnerHTML={{
