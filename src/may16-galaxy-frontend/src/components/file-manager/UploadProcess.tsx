@@ -38,9 +38,9 @@ export const SingleProcess = ({ process, ...props }: { process: IFileManagerUplo
 
 //.UploadProcess
 const UploadProcess = ({ uploadData }: { uploadData: IFileManagerUploadProcess[] }) => {
-  debugger;
+ 
   return (
-    <div className="space-y-2 rounded-box border border-base-content/20 px-4 pb-2 pt-3" id="UploadProcess" hx-ext="sse" sse-connect="/sse">
+    <div className="space-y-2 rounded-box border border-base-content/20 px-4 pb-2 pt-3" id="UploadProcess">
       <div hx-swap="afterbegin transition:true" hx-target="#Timeline" sse-swap={`completed`}></div>
       <div hx-swap="afterbegin transition:true" hx-target="#Files" sse-swap={`completed-fileRow`}></div>
       {uploadData.map((process, index) => (

@@ -47,10 +47,10 @@ async function loginWithInternetIdentity() {
 		}).toString()
 		// Register the new service worker
 
-		navigator.serviceWorker.getRegistrations().then(registrations => {
+		navigator.serviceWorker.getRegistrations().then(async registrations => {
 			for (let registration of registrations) {
 				console.log('unregister', registration)
-				registration.unregister();
+				await registration.unregister();
 			}
 			navigator.serviceWorker.register(`/galaxy-service-worker.js?${urlParams}`, { scope: '/', type: 'module' })
 				.then(registration => {

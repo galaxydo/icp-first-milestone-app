@@ -37,12 +37,12 @@ actor class Pictures () = this {
   };
 
   //.whoami
-  public shared query func whoami() : async Principal {
+  public shared query(msg) func whoami() : async Principal {
     return msg.caller;
   };
 
   //.uploadPicture
-  public shared func uploadPicture(name: Text, collection: Text, content: Blob) : async ?PictureId {
+  public shared(msg) func uploadPicture(name: Text, collection: Text, content: Blob) : async ?PictureId {
     let owner = Principal.toText(msg.caller);
     let pictureId = owner # "/" # collection # "/" # name;
     let newPicture: Picture = {
@@ -73,14 +73,14 @@ actor class Pictures () = this {
   };
 
   //.readPicture
-  public query func readPicture(collection: Text, fileName: Text) : async ?Picture {
+  public query(msg) func readPicture(collection: Text, fileName: Text) : async ?Picture {
     let owner = Principal.toText(msg.caller);
     let fileId = owner # "/" # collection # "/" # fileName;
     return state.pictures.get(fileId);
   };
 
   //.listPictureIds
-  public shared query func listPictureIds(collection: Text) : async [PictureId] {
+  public shared query(msg) func listPictureIds(collection: Text) : async [PictureId] {
     let owner = Principal.toText(msg.caller);
     let collectionKey = owner # "/" # collection;
     switch (state.collections.get(collectionKey)) {

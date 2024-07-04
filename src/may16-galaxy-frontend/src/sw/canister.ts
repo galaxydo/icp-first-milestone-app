@@ -1,7 +1,11 @@
 import { AuthClient } from '@dfinity/auth-client';
 import { Actor, ActorSubclass, HttpAgent, Identity } from "@dfinity/agent";
-import { idlFactory, FileInfo, _SERVICE } from "../../../declarations/may16-galaxy-backend/may16-galaxy-backend.did.js"; const urlParams = new URLSearchParams(location.search);
+import { idlFactory, FileInfo, _SERVICE } from "../../../declarations/may16-galaxy-backend/may16-galaxy-backend.did.js";
+
+const urlParams = new URLSearchParams(location.search);
+
 const { CANISTER_ID_MAY16_GALAXY_BACKEND, DFX_NETWORK, REGISTER_TIMESTAMP } = Object.fromEntries(urlParams);
+
 console.log('DFX_NETWORK', DFX_NETWORK)
 
 console.log('self.location.hostname', self.location.hostname)

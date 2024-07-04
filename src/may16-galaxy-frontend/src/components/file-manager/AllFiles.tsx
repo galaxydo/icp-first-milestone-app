@@ -22,6 +22,11 @@ import DateUtil from "@/utils/date";
 import { StringUtil } from "@/utils/string";
 import { IFileManagerFile } from "@/types/file-manager";
 import { FileData } from "../../../../declarations/may16-galaxy-backend/may16-galaxy-backend.did";
+import { backendActor } from "@/sw/canister";
+import { addFileToProcess, app, defaultCollectionName, processFile } from "@/sw";
+import mockFile from "@/sw/mockFile";
+import state from "@/sw/state";
+import { render } from "preact-render-to-string";
 
 export const LoadingFileRow = ({ file, ...props }: { file: FilePlaceholder; checkedAll?: boolean }) => {
   return (
@@ -29,7 +34,7 @@ export const LoadingFileRow = ({ file, ...props }: { file: FilePlaceholder; chec
       <TableRow className="cursor-pointer hover:bg-base-200/40 animate-pulse"
         role="status"
         {...props}
-        hx-get={`/fileInfo/${file.name}`} hx-target="outerHTML" hx-trigger="load"
+        hx-get={`/FileRow/${file.name}`} hx-swap="outerHTML" hx-trigger="load"
       >
         <Checkbox
           size={"xs"}
@@ -155,7 +160,7 @@ export const FilesTable = () => {
       <span className="text-sm font-medium text-base-content/80">View</span>
     </TableHead>
 
-    <FilesTableBody storageFiles={[]} hx-get="/myFileIds" hx-trigger="load" hx-swap="outerHTML" />
+    <FilesTableBody storageFiles={[]} hx-get={`/FilesTableBody/${defaultCollectionName}`} hx-trigger="load" hx-swap="outerHTML transition:true scroll:top" />
   </Table>
 }
 

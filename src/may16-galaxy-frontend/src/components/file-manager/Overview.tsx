@@ -7,7 +7,14 @@ import Icon from "@/components/Icon";
 import Activity from "./Activity";
 import UploadProcess from "./UploadProcess";
 import state from '@/sw/state';
+import { routes } from "@generated/routes";
 
+//.FreeSpaceWrapper
+export const FreeSpaceWrapper = () => {
+  return <span className="text-base font-medium text-primary">Free Space <span className="font-bold" hx-get={routes.get.FreeSpaceValue} hx-trigger="load">-</span> Kb</span>
+}
+
+//.Overview
 const Overview = () => {
   const { inProcess: uploadData, activity } = state;
 
@@ -24,6 +31,7 @@ const Overview = () => {
         <div className="mt-3 rounded bg-primary/5 p-4">
           <div className="flex items-center gap-3">
             <Icon icon={hardDriveIcon} fontSize={18} className="text-primary" />
+            <FreeSpace />
             <span className="text-base font-medium text-primary">Free Space <span class="font-bold" hx-get="/size" hx-trigger="load">-</span> Kb</span>
             <span className="ms-auto text-sm font-semibold text-primary">5 GB</span>
           </div>

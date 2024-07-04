@@ -2,7 +2,8 @@ import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'url';
 import environment from 'vite-plugin-environment';
 import dotenv from 'dotenv';
-import { resolve } from 'path';
+import path, { resolve } from 'path';
+import fs from 'fs';
 
 // import multiInput from 'rollup-plugin-multi-input';
 
@@ -10,8 +11,7 @@ import preact from "@preact/preset-vite";
 
 import { TailwindCSSVitePlugin } from 'tailwindcss-vite-plugin';
 
-// import tailwindcss from "tailwindcss";
-
+import islandsPlugin from './islands-plugin';
 
 dotenv.config({ path: '../../.env' });
 
@@ -61,6 +61,12 @@ export default defineConfig({
       //   ),
       // },
       {
+        find: "@generated",
+        replacement: fileURLToPath(
+          new URL("./generated", import.meta.url)
+        ),
+      },
+       {
         find: "@",
         replacement: fileURLToPath(
           new URL("./src", import.meta.url)
@@ -109,6 +115,7 @@ export default defineConfig({
           ),
       }
     ),
+    islandsPlugin(),
   ],
   // css: {
   //   postcss: {
