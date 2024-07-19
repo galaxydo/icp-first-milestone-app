@@ -4,19 +4,19 @@
         "type": "pull",
         "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
     },
-    "may16-galaxy-backend": {
-      "main": "src/may16-galaxy-backend/Pictures.mo",
+    "galaxy-backend": {
+      "main": "src/galaxy-backend/Pictures.mo",
       "type": "motoko"
     },
-    "may16-galaxy-frontend": {
+    "galaxy-frontend": {
       "dependencies": [
-        "may16-galaxy-backend"
+        "galaxy-backend"
       ],
       "source": [
-        "src/may16-galaxy-frontend/dist"
+        "src/galaxy-frontend/dist"
       ],
       "type": "assets",
-      "workspace": "may16-galaxy-frontend"
+      "workspace": "galaxy-frontend"
     }
   },
   "defaults": {

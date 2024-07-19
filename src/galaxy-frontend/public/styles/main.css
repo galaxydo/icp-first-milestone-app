@@ -1,0 +1,100 @@
+/* index.css */
+
+.filepond--wrapper .filepond--drop-label,
+.filepond--panel-center.filepond--panel-root,
+.filepond--panel-bottom.filepond--panel-root {
+    @apply rounded bg-base-200 text-base-content;
+}
+
+/* app.css */
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/DM-Sans-Regular.ttf') format('truetype');
+}
+
+:root {
+    --leftbar-width: 240px;
+}
+
+.leftmenu-wrapper {
+    width: var(--leftbar-width);
+    transition: all 0.3s;
+}
+
+.leftmenu-wrapper.hide {
+    margin-inline-start: calc(var(--leftbar-width) * -1);
+}
+
+.main-wrapper {
+    width: 100%;
+    max-width: 100vw;
+    height: 100vh;
+}
+
+/*--  Overrides  --*/
+
+.btn {
+    @apply font-medium;
+}
+
+.card .card-title {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.dropdown .dropdown-content {
+    z-index: 10;
+    @apply shadow hover:shadow-md;
+}
+
+.timeline-vertical.timeline-hr-sm > li > hr {
+    width: 2px;
+}
+
+.animate-bounce-2 {
+    -webkit-animation: bounce-2 2s infinite alternate;
+    animation: bounce-2 2s infinite alternate;
+}
+
+@keyframes bounce-2 {
+    0% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+    to {
+        -webkit-transform: translateY(-8px);
+        transform: translateY(-8px);
+    }
+}
+
+body {
+    font-family: "DM Sans", serif;
+}
+
+/**
+ * FilePond Custom Styles
+ */
+.filepond--drop-label {
+	color: #4c4e53;
+}
+
+.filepond--label-action {
+	text-decoration-color: #babdc0;
+}
+
+.filepond--panel-root {
+	border-radius: 2em;
+	background-color: #edf0f4;
+	height: 1em;
+}
+
+.filepond--item-panel {
+	background-color: #595e68;
+}
+
+.filepond--drip-blob {
+	background-color: #7f8a9a;
+}

@@ -1,3 +1,5 @@
+.git
+
 # Various IDEs and Editors
 .vscode/
 .idea/
@@ -17,9 +19,8 @@
 target/
 
 # frontend code
-node_modules/
-dist/
-.svelte-kit/
+**/node_modules/
+**/dist/
 
 # environment variables
 # .env
@@ -28,9 +29,16 @@ dist/
 
 package-lock.json
 
-public/excalidraw
-public/filepond
-public/htmx
-public/tagify
+# public/excalidraw
+# public/filepond
+# public/htmx
+# public/tagify
 
-galaxy-service-worker.js
+**/galaxy-service-worker.js
+**/galaxy-service-worker
+**/oxc.txt
+
+**/prompts/*
+!prompts/templates/
+!prompts/templates/**
+# !prompts/Jul19

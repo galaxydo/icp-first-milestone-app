@@ -1,0 +1,4 @@
+frontend: cd src/galaxy-frontend && ls src/**/*.ts* | /opt/homebrew/bin/entr -r -s 'ENABLED_ISLANDS=ALL vite build --mode development'
+serve: cd src/galaxy-frontend/dist && ~/.deno/bin/file_server
+dfx: dfx start --clean
+canister: sleep 5 && dfx canister create galaxy-frontend && ls src/**/*.mo* | /opt/homebrew/bin/entr -r -s 'dfx deploy --yes galaxy-backend && dfx build galaxy-frontend'
