@@ -16,6 +16,9 @@
 
 ---
 
+[![Demo](http://img.youtube.com/vi/vL4PBYuxgDA/0.jpg)](http://www.youtube.com/watch?v=vL4PBYuxgDA "Galaxy IC Demo")
+[Click to watch Video](http://www.youtube.com/watch?v=vL4PBYuxgDA)
+
 ## Introduction
 
 Welcome to the Galaxy Web App User Guide. This guide provides step-by-step instructions on how to effectively use the app. The Galaxy Web App allows users to upload images into a canister hosted on the Internet Computer, organize images into collections, and view images on a canvas for arrangement and visualization.
