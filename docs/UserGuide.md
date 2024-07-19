@@ -16,7 +16,7 @@
 
 ---
 
-[![Demo](http://img.youtube.com/vi/vL4PBYuxgDA/0.jpg)](http://www.youtube.com/watch?v=vL4PBYuxgDA "Galaxy IC Demo")
+[![Demo](http://img.youtube.com/vi/vL4PBYuxgDA/0.jpg?jul20)](http://www.youtube.com/watch?v=vL4PBYuxgDA "Galaxy IC Demo")
 [Click to watch Video](http://www.youtube.com/watch?v=vL4PBYuxgDA)
 
 ## Introduction
