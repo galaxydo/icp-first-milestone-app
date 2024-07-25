@@ -91,6 +91,54 @@ actor class Pictures () = this {
     }
   };
 
+  //.deletePicture
+  public shared(msg) func deletePicture(collection: Text, fileName: Text) : async ?Text {
+      let owner = Principal.toText(msg.caller);
+      let pictureId = owner # "/" # collection # "/" # fileName;
+
+      Debug.print("Attempting to delete picture: " # pictureId);
+
+      // Check if the picture exists
+      switch (state.pictures.get(pictureId)) {
+          case null {
+              Debug.print("Picture not found: " # pictureId);
+              return null;
+          };
+          case (?_) {
+              // Remove the picture from the pictures map and handle the return value
+              switch (state.pictures.remove(pictureId)) {
+                  case null {
+                      Debug.print("Failed to remove picture: " # pictureId);
+                      return null;
+                  };
+                  case (?removedPicture) {
+                      Debug.print("Picture removed: " # pictureId);
+
+                      // Update the collections map
+                      let collectionKey = owner # "/" # collection;
+                      switch (state.collections.get(collectionKey)) {
+                          case null { 
+                              Debug.print("Collection not found: " # collectionKey);
+                              return null; 
+                          };
+                          case (?fileIds) {
+                              let updatedFileIds = Array.filter<Text>(fileIds, func(id) { id != pictureId });
+                              if (Array.size(updatedFileIds) == 0) {
+                                  ignore state.collections.remove(collectionKey);
+                                  Debug.print("Collection removed: " # collectionKey);
+                              } else {
+                                  state.collections.put(collectionKey, updatedFileIds);
+                                  Debug.print("Updated collection: " # collectionKey);
+                              }
+                          };
+                      };
+                      return ?pictureId;
+                  };
+              };
+          };
+      };
+  };
+
   //.getMemorySize
   public func getMemorySize() : async Nat {
     return Prim.rts_memory_size();

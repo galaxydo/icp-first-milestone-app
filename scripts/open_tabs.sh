@@ -3,8 +3,31 @@
 # Get the directory of the script
 script_dir=$(dirname "$(realpath "$0")")
 
-# Define the input file path relative to the script directory
-INPUT_FILE="$script_dir/tabs.txt"
+# Default input file path
+DEFAULT_INPUT_FILE="$script_dir/tabs.txt"
+
+# Initialize variables
+INPUT_FILE=""
+key=""
+
+# Parse named arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --key)
+      key="$2"
+      shift 2
+      ;;
+    *)
+      INPUT_FILE="$1"
+      shift
+      ;;
+  esac
+done
+
+# If no input file is provided, use the default
+if [[ -z "$INPUT_FILE" ]]; then
+  INPUT_FILE="$DEFAULT_INPUT_FILE"
+fi
 
 # Check if the input file exists
 if [[ ! -f "$INPUT_FILE" ]]; then
@@ -32,8 +55,7 @@ execute_command() {
 }
 
 # Check if a key argument is provided
-if [[ -n "$1" ]]; then
-  key="$1"
+if [[ -n "$key" ]]; then
   # Read commands from the input file and launch the command matching the key in a new tab
   while IFS=: read -r label command; do
     if [[ "$label" == "$key" ]]; then

@@ -12,6 +12,7 @@ export interface Picture {
 }
 export type PictureId = string;
 export interface Pictures {
+  'deletePicture' : ActorMethod<[string, string], [] | [string]>,
   'getCanisterBalance' : ActorMethod<[], bigint>,
   'getMemorySize' : ActorMethod<[], bigint>,
   'listPictureIds' : ActorMethod<[string], Array<PictureId>>,

@@ -109,22 +109,31 @@ app.${method.toLowerCase()}('/${componentName}', (req, res) => {
                 };
 
                 // Generate async component wrapper or placeholder based on enabledIslands
-                asyncComponentWrappers.push(`
-  export function ${componentName}Island(props) {
-    const queryParams = props.params ? new URLSearchParams(props.params).toString() : '';
-    const url = \`/${componentName}?\${queryParams}\`;
-    const trigger = props.trigger || 'load';
-    delete props.trigger;
-    const swap = props.swap || 'innerHTML transition:true scroll:top';
-    delete props.swap;
+                            asyncComponentWrappers.push(`
+              export function ${componentName}Island(props) {
+                const queryParams = props.params ? new URLSearchParams(props.params).toString() : '';
+                const url = \`/${componentName}?\${queryParams}\`;
+                const trigger = props.trigger || 'load';
+                delete props.trigger;
+                const swap = props.swap || 'innerHTML transition:true scroll:top';
+                delete props.swap;
 
-    return (
-      <div id="${componentName}" hx-get={url} hx-trigger={trigger} hx-swap={swap} {...props}>
-        Loading...
-      </div>
-    );
-  }
-                `);
+                const divProps = {
+                  id: "${componentName}",
+                  "hx-get": url,
+                  "hx-trigger": trigger,
+                  "hx-swap": swap,
+                  "hx-on:htmx:after-request": "_hyperscript.processNode(document.querySelector('#${componentName}'))",
+                  ...props
+                };
+
+                return (
+                  <div {...divProps}>
+                    Loading...
+                  </div>
+                );
+              }
+                            `);
               }
               hxMappings[componentName][method.toLowerCase()] = `/${componentName}`;
             }

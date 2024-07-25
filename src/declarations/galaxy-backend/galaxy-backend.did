@@ -1,6 +1,7 @@
 type Time = int;
 type Pictures = 
  service {
+   deletePicture: (text, text) -> (opt text);
    getCanisterBalance: () -> (nat);
    getMemorySize: () -> (nat);
    listPictureIds: (text) -> (vec PictureId) query;

@@ -6,7 +6,10 @@ FilePond.registerPlugin(
 );
 
 FilePond.create(
-    document.querySelector('input[type="file"]')
+    document.querySelector('input[type="file"]'),
+    {
+        acceptedFileTypes: ['image/*'],
+    }
 );
 
 // function handleAddFile(event) {

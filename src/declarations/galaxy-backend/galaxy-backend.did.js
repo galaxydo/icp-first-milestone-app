@@ -10,6 +10,7 @@ export const idlFactory = ({ IDL }) => {
     'uploadedAt' : Time,
   });
   const Pictures = IDL.Service({
+    'deletePicture' : IDL.Func([IDL.Text, IDL.Text], [IDL.Opt(IDL.Text)], []),
     'getCanisterBalance' : IDL.Func([], [IDL.Nat], []),
     'getMemorySize' : IDL.Func([], [IDL.Nat], []),
     'listPictureIds' : IDL.Func([IDL.Text], [IDL.Vec(PictureId)], ['query']),

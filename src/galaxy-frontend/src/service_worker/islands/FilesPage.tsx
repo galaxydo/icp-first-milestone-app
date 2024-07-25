@@ -71,7 +71,8 @@ const FileUploader = () => {
                    class="filepond"
                    name="filepond"
                    multiple
-                   data-max-file-size="2MB" data-allow-reorder="true" data-credits="false" /></div>
+                   data-max-file-size="2MB" data-allow-reorder="true" data-credits="false"
+                   /></div>
                 </div>
               </form>
             </Modal>
@@ -136,7 +137,7 @@ function FilesPage({ theme }: { theme: string }) {
                       </div>
                     </div>
                     <h3 className="mt-6 text-base font-medium">My Images</h3>
-                     <div className="mt-3"><AllFilesIsland trigger="whoamiFetched from:body delay:200ms, upload-done from:body" /></div>
+                     <div className="mt-3"><AllFilesIsland trigger="whoamiFetched from:body delay:200ms, upload-done from:body, FileDeleted from:body" /></div>
                   </div>
                 </div>
                 <Drawer
@@ -171,9 +172,9 @@ export async function GET() {
         <link href="/index.css" rel="stylesheet" />
         <script src="/htmx/htmx2.min.js"></script>
         <script src="/htmx/sse.js"></script>
+        <script type="text/hyperscript" src="/scripts/debug._hs"></script>
         <script src="/htmx/_hyperscript.min.js"></script>
         <script src="/htmx/eventsource.js"></script>
-        <script type="text/hyperscript" src="/scripts/debug._hs"></script>
         <link href="/filepond/filepond.min.css" rel="stylesheet" />
       </head>
       <body class="slide-it-no" _="on every htmx:beforeSend in <button:not(.no-disable)/> 

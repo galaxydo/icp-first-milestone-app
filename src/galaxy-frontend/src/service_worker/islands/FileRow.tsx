@@ -50,7 +50,7 @@ export async function GET(req, res) {
     file.size = fileStats.size;
     file.uploadedAt = fileStats.mtimeMs;
     file.content = cachedFile;
-    return <StorageFileRow file={file} />;
+    return [<StorageFileRow file={file} />, { 'HX-Trigger': 'FileRow' }];
   }
 
   const remoteFile = await backendActor.readPicture(collection, fileName);
@@ -66,10 +66,17 @@ export async function GET(req, res) {
       console.error('Error writing file', fileId, err);
     }
 
-    return <StorageFileRow file={file} />;
+    return [<StorageFileRow file={file} />, { 'HX-Trigger': 'FileSaved' }];
+  } else {
+    const filePath = `/${fileId}`;
+    try {
+      const resp = await fs.unlink(filePath);
+      console.log(resp)
+    } catch (err) { console.error(err) }
+    return [<div>Deleted</div>, { 'HX-Trigger': 'FileDeleted' }]
   }
 
-  return <LoadingFileRow file={file} />;
+  // return <LoadingFileRow file={file} />;
 }
 
 async function ensureDirectoryExists(dirPath) {
@@ -137,6 +144,8 @@ export const StorageFileRow = ({ file, ...props }: { file: FileData; checkedAll?
         {...props}
       >
         <Checkbox
+          name="FileRow"
+          value={`${file.owner}/${file.collection}/${file.name}`}
           _="on click halt the event's bubbling"
           size={"xs"}
           checked={false}
