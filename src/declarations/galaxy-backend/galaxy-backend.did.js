@@ -20,7 +20,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'uploadPicture' : IDL.Func(
-        [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
+        [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8), Time],
         [IDL.Opt(PictureId)],
         [],
       ),

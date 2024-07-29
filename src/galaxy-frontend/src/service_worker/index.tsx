@@ -93,12 +93,15 @@ async function renderMainPage(res) {
 //.define-routes
 
 // Define the readdir endpoint
+//.readdir
 app.get('/readdir', async (req, res) => {
   const files = await fs.readdir(`/${state.principal}/${state.collectionName}`);
-  res.json(files);
+  const sortedFiles = files.sort((a, b) => a.uploadedAt - b.uploadedAt);
+  res.json(sortedFiles);
 });
 
 // Define the readFile endpoint
+//.readFile
 app.get('/readFile', async (req, res) => {
   const fileName = req.params.fileName;
   const filePath = `/${state.principal}/${state.collectionName}/${fileName}`;

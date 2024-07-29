@@ -6,7 +6,7 @@ type Pictures =
    getMemorySize: () -> (nat);
    listPictureIds: (text) -> (vec PictureId) query;
    readPicture: (text, text) -> (opt Picture) query;
-   uploadPicture: (text, text, blob) -> (opt PictureId);
+   uploadPicture: (text, text, blob, Time) -> (opt PictureId);
    whoami: () -> (principal) query;
  };
 type PictureId = text;

@@ -18,7 +18,7 @@ export interface Pictures {
   'listPictureIds' : ActorMethod<[string], Array<PictureId>>,
   'readPicture' : ActorMethod<[string, string], [] | [Picture]>,
   'uploadPicture' : ActorMethod<
-    [string, string, Uint8Array | number[]],
+    [string, string, Uint8Array | number[], Time],
     [] | [PictureId]
   >,
   'whoami' : ActorMethod<[], Principal>,

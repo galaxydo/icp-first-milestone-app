@@ -17,7 +17,8 @@ type FileHiddenInput = {
 const encodeArrayBuffer = (file: ArrayBuffer): number[] =>
   Array.from(new Uint8Array(file));
 
-export const addAndProcessFile = async (file: StorageFile, fileContent: any) => {
+//.addAndProcessFile
+export const addAndProcessFile = async (file: StorageFile, fileContent: any, timestamp: number) => {
   state.inProcess.push(file);
   state.contentCache[file.name] = fileContent;
 
@@ -33,7 +34,7 @@ export const addAndProcessFile = async (file: StorageFile, fileContent: any) => 
     const collectionName = defaultCollectionName;
     const content = encodeArrayBuffer(bsf);
 
-    const fileId = (await backendActor.uploadPicture(file.name, collectionName, content))[0] as string;
+    const fileId = (await backendActor.uploadPicture(file.name, collectionName, content, timestamp))[0] as string;
     console.log(`processFile: Received fileId from backend: ${fileId}`);
 
     if (fileId) {
@@ -53,24 +54,33 @@ export const addAndProcessFile = async (file: StorageFile, fileContent: any) => 
 }
 
 // if mock parameter true then take mockFile instead of formData
+//.UploadProcessPOST
 export async function POST(req: Request) {
   const formData = await req.formData();
   const files = [];
 
+  const baseTimestamp = Math.floor(Date.now() / 1000); // Get current time in seconds
+  
   for (let entry of formData.entries()) {
     if (entry[0] === 'filepond') {
       const file = JSON.parse(entry[1]) as FileHiddenInput;
 
       files.push(file);
-
-      addAndProcessFile({
-        'name': file.name,
-        'size': file.size,
-        'percent': 0,
-        'type': file.type,
-        'id': null,
-      }, file.data);
     }
+  }
+
+  // Reverse the files list order
+  files.reverse();
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    addAndProcessFile({
+      'name': file.name,
+      'size': file.size,
+      'percent': 0,
+      'type': file.type,
+      'id': null,
+    }, file.data, baseTimestamp + i); // Increment timestamp by index
   }
 
   const uploadData: IFileManagerUploadProcess[] = files.map(file => {
@@ -83,7 +93,7 @@ export async function POST(req: Request) {
 
   return <UploadProcess uploadData={uploadData} />;
 }
-
+//.UploadProcess-GET
 export async function GET(req: Request) {
   const uploadData: IFileManagerUploadProcess[] = state.inProcess;
 

@@ -42,7 +42,7 @@ actor class Pictures () = this {
   };
 
   //.uploadPicture
-  public shared(msg) func uploadPicture(name: Text, collection: Text, content: Blob) : async ?PictureId {
+  public shared(msg) func uploadPicture(name: Text, collection: Text, content: Blob, timestamp : Time.Time) : async ?PictureId {
     let owner = Principal.toText(msg.caller);
     let pictureId = owner # "/" # collection # "/" # name;
     let newPicture: Picture = {
@@ -51,10 +51,10 @@ actor class Pictures () = this {
       collection = collection;
       name = name;
       content = content;
-      uploadedAt = Time.now();
+      uploadedAt = timestamp;
     };
 
-    Debug.print("uploading..." # debug_show(pictureId));
+    Debug.print("uploading..." # debug_show(pictureId) # "...timestamp = " # debug_show(timestamp));
 
     state.pictures.put(pictureId, newPicture);
 
