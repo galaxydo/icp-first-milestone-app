@@ -1,4 +1,0 @@
----
-generate commit message
-|assistant|
-Sure, could you provide some details about the changes that were made in this commit? This will help me generate an accurate and informative commit message for you.
