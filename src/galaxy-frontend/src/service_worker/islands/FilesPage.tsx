@@ -94,7 +94,7 @@ const Overview = () => {
         <div className="mt-3 rounded bg-primary/5 p-4">
           <div className="flex items-center gap-3">
             <Icon icon={hardDriveIcon} fontSize={18} className="text-primary" />
-            <FreeSpaceValueIsland />
+            <FreeSpaceValueIsland trigger="whoamiFetched from:body" />
           </div>
           <RemainingBalanceIsland />
         </div>
