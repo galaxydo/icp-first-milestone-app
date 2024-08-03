@@ -47,7 +47,7 @@ const FileUploader = () => {
                     <Button id="push"
                       _="
               on click
-                remove @open from <dialog/> then remove .modal-open from <dialog/> then add @checked='true' to <div[role='rightDrawer'] .drawer-toggle />
+                remove @open from <dialog/> then remove .modal-open from <dialog/> then add @checked='true' to <div[role='rightDrawer'] .drawer-toggle /> then call resetFilepond()
               end
                   on FilePond:addfile from document 
                     remove @disabled from me

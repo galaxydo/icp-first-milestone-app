@@ -12,6 +12,15 @@ FilePond.create(
     }
 );
 
+function resetFilepond() {
+    const fp = FilePond.find(document.querySelector('.filepond--root'));
+    if (fp.getFiles().length != 0) {
+        for (var i = 0; i <= fp.getFiles().length - 1; i++) {
+          fp.removeFile(fp.getFiles()[0].id)
+        }
+    }
+}
+
 // function handleAddFile(event) {
 //   console.log('ENABLE NOW');
 //   const button = document.getElementById('push');
