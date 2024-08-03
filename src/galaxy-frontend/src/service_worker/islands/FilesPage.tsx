@@ -40,7 +40,7 @@ const FileUploader = () => {
                 className=" border-base-content/20">
                 Upload
             </Button>
-            <Modal open={false} backdrop role="files" className="h-full">
+            <Modal open={false} backdrop role="files">
               <form hx-post="/UploadProcess" hx-target="#UploadProcess" hx-swap="innerHTML">
                 <div className="flex items-center justify-between">
                     <p className="font-medium">Pictures Canister</p>
@@ -50,12 +50,10 @@ const FileUploader = () => {
                 remove @open from <dialog/> then remove .modal-open from <dialog/> then add @checked='true' to <div[role='rightDrawer'] .drawer-toggle />
               end
                   on FilePond:addfile from document 
-                    log 'ENABLE NOW'
                     remove @disabled from me
                     remove .btn-disabled from me
                   end
                   on FilePond:addfilestart from document 
-                    log 'DISABLE MEEE'
                     add @disabled to me
                     add .btn-disabled to me
                   end"
@@ -67,7 +65,7 @@ const FileUploader = () => {
                       Push
                   </Button>
                 </div>
-                <div className="mt-4" ><div class="filepond--wrapper"><input type="file" 
+                <div className="mt-4"><div class="filepond--wrapper"><input type="file" 
                    class="filepond"
                    name="filepond"
                    multiple

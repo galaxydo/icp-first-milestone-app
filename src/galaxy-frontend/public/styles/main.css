@@ -6,6 +6,10 @@
     @apply rounded bg-base-200 text-base-content;
 }
 
+.filepond--wrapper .filepond--root {
+  height: 65%;
+}
+
 /* app.css */
 
 @font-face {
