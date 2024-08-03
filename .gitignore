@@ -39,12 +39,5 @@ package-lock.json
 **/oxc.txt
 
 **/prompts/*
-# !prompts/templates/
-!prompts/templates/**
-<<<<<<< HEAD
-# !prompts/Jul18
-# !prompts/Jul20
-# !prompts/Jul23*
-=======
-# !prompts/Jul29*
->>>>>>> aae6c46 (🌟 2024-07-25 21:07:14 🌟)
+!prompts/templates
+

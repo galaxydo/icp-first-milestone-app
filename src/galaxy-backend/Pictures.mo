@@ -56,16 +56,21 @@ actor class Pictures () = this {
 
     Debug.print("uploading..." # debug_show(pictureId) # "...timestamp = " # debug_show(timestamp));
 
+    let pictureExists = state.pictures.get(pictureId);
     state.pictures.put(pictureId, newPicture);
 
-    let collectionKey = owner # "/" # collection;
-    let fileIds = state.collections.get(collectionKey);
-    switch (fileIds) {
-      case null {
-        state.collections.put(collectionKey, [pictureId]);
-      };
-      case (?ids) {
-        state.collections.put(collectionKey, Array.append(ids, [pictureId]));
+    if (pictureExists != null) {
+      Debug.print("Picture already exists in the collection: " # pictureId);
+    } else {
+      let collectionKey = owner # "/" # collection;
+      let fileIds = state.collections.get(collectionKey);
+      switch (fileIds) {
+        case null {
+          state.collections.put(collectionKey, [pictureId]);
+        };
+        case (?ids) {
+          state.collections.put(collectionKey, Array.append(ids, [pictureId]));
+        };
       };
     };
 
